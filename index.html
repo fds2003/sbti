@@ -2737,14 +2737,57 @@
     // 事件监听
     // ============================================
     
-    document.getElementById('startBtn').addEventListener('click', () => startTest(false));
-    document.getElementById('backIntroBtn').addEventListener('click', () => showScreen('intro'));
-    document.getElementById('submitBtn').addEventListener('click', renderResult);
-    document.getElementById('restartBtn').addEventListener('click', () => startTest(false));
-    document.getElementById('toTopBtn').addEventListener('click', () => showScreen('intro'));
-    document.getElementById('shareBtn').addEventListener('click', shareResult);
-    document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
-    document.getElementById('downloadBtn').addEventListener('click', downloadResult);
+    // 等待DOM加载完成后再绑定事件
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindEventListeners);
+    } else {
+        bindEventListeners();
+    }
+    
+    function bindEventListeners() {
+        const startBtn = document.getElementById('startBtn');
+        const backIntroBtn = document.getElementById('backIntroBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const toTopBtn = document.getElementById('toTopBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        if (startBtn) {
+            startBtn.addEventListener('click', () => startTest(false));
+        } else {
+            console.error('startBtn element not found!');
+        }
+        
+        if (backIntroBtn) {
+            backIntroBtn.addEventListener('click', () => showScreen('intro'));
+        }
+        
+        if (submitBtn) {
+            submitBtn.addEventListener('click', renderResult);
+        }
+        
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => startTest(false));
+        }
+        
+        if (toTopBtn) {
+            toTopBtn.addEventListener('click', () => showScreen('intro'));
+        }
+        
+        if (shareBtn) {
+            shareBtn.addEventListener('click', shareResult);
+        }
+        
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', copyLink);
+        }
+        
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', downloadResult);
+        }
+    }
 
     // 键盘快捷键支持
     document.addEventListener('keydown', (e) => {
