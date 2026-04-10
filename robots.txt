@@ -1,0 +1,19 @@
+# robots.txt for SBTI Test Project
+# https://sbti.oucloud.top/
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://sbti.oucloud.top/sitemap.xml
+
+# Disallow sensitive files
+Disallow: /*.md
+Disallow: /AGENTS.md
+Disallow: /DEPLOYMENT.md
+Disallow: /TESTING.md
+Disallow: /SEO-*
+Disallow: /keyword-research.md
+
+# Crawl-delay (optional, adjust based on your needs)
+# Crawl-delay: 1
