@@ -1021,7 +1021,7 @@
       <div class="hero card hero-minimal">
         <h1 id="intro-title">MBTI已经过时，SBTI来了。</h1>
         <div class="hero-actions hero-actions-single">
-          <button id="startBtn" class="btn-primary" aria-label="开始 SBTI 人格测试" onclick="window.startTest && window.startTest(false)">开始测试</button>
+          <button type="button" id="startBtn" class="btn-primary" aria-label="开始 SBTI 人格测试">开始测试</button>
         </div>
       </div>
 
@@ -1308,8 +1308,8 @@
           </div>
           
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button id="restartBtn" class="btn-secondary" aria-label="重新开始测试">重新测试</button>
-            <button id="toTopBtn" class="btn-primary" aria-label="返回首页">回到首页</button>
+            <button type="button" id="restartBtn" class="btn-secondary" aria-label="重新开始测试">重新测试</button>
+            <button type="button" id="toTopBtn" class="btn-primary" aria-label="返回首页">回到首页</button>
           </div>
         </div>
       </div>
@@ -1676,7 +1676,7 @@
         "code": "OH-NO",
         "cn": "哦不人",
         "intro": "哦不！我怎么会是这个人格？！",
-        "desc": \"哦不！\"并非恐惧的尖叫，而是一种顶级的智慧。当普通人看到一个杯子放在桌沿，哦不人看到的是一场由\"水渍-短路-火灾-全楼疏散-经济损失-蝴蝶效应-世界末日\"构成的灾难史诗。于是，伴随着一声发自灵魂深处的 Oh, no!，他们会以迅雷不及掩耳之势把杯子挪到桌子正中央，然后再垫上一张吸水杯垫。哦不人对\"边界\"有一种近乎偏执的尊重：你的就是你的，我的就是我的。所有意外和风险都已经在他的\"Oh, no!\"声中，被扼杀在了萌芽状态。他们是秩序的守护神，是混乱世界里最后那批神经绷得很直的体面人。"
+        "desc": "\"哦不！\"并非恐惧的尖叫，而是一种顶级的智慧。当普通人看到一个杯子放在桌沿，哦不人看到的是一场由\"水渍-短路-火灾-全楼疏散-经济损失-蝴蝶效应-世界末日\"构成的灾难史诗。于是，伴随着一声发自灵魂深处的 Oh, no!，他们会以迅雷不及掩耳之势把杯子挪到桌子正中央，然后再垫上一张吸水杯垫。哦不人对\"边界\"有一种近乎偏执的尊重：你的就是你的，我的就是我的。所有意外和风险都已经在他的\"Oh, no!\"声中，被扼杀在了萌芽状态。他们是秩序的守护神，是混乱世界里最后那批神经绷得很直的体面人。"
       },
       "GOGO": {
         "code": "GOGO",
@@ -2419,7 +2419,6 @@
     
     // 开始测试
     window.startTest = function startTest(preview = false) {
-      console.log('startTest called with preview:', preview);
       app.previewMode = preview;
       app.answers = {};
       clearResult();
@@ -2435,6 +2434,20 @@
       renderQuestions();
       showScreen('test');
     }
+
+    // 开始 / 重新测试：捕获阶段委托，避免未绑定或重复 onclick 导致无响应
+    document.body.addEventListener(
+      'click',
+      function sbtiStartOrRestart(e) {
+        var el = e.target && e.target.closest && e.target.closest('#startBtn, #restartBtn');
+        if (!el) return;
+        e.preventDefault();
+        if (typeof window.startTest === 'function') {
+          window.startTest(false);
+        }
+      },
+      true
+    );
 
     // 分享功能
     function shareResult() {
@@ -2745,26 +2758,13 @@
     }
     
     function bindEventListeners() {
-        console.log('bindEventListeners called');
-        const startBtn = document.getElementById('startBtn');
-        console.log('startBtn:', startBtn);
         const backIntroBtn = document.getElementById('backIntroBtn');
         const submitBtn = document.getElementById('submitBtn');
-        const restartBtn = document.getElementById('restartBtn');
         const toTopBtn = document.getElementById('toTopBtn');
         const shareBtn = document.getElementById('shareBtn');
         const copyLinkBtn = document.getElementById('copyLinkBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-        
-        if (startBtn) {
-                    console.log('Adding click listener to startBtn');
-                    startBtn.addEventListener('click', () => {
-                        console.log('startBtn clicked!');
-                        window.startTest(false);
-                    });
-                } else {
-                    console.error('startBtn element not found!');
-                }        
+
         if (backIntroBtn) {
             backIntroBtn.addEventListener('click', () => showScreen('intro'));
         }
@@ -2772,11 +2772,7 @@
         if (submitBtn) {
             submitBtn.addEventListener('click', renderResult);
         }
-        
-        if (restartBtn) {
-            restartBtn.addEventListener('click', () => window.startTest(false));
-        }
-        
+
         if (toTopBtn) {
             toTopBtn.addEventListener('click', () => showScreen('intro'));
         }
