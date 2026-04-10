@@ -1022,7 +1022,7 @@
       <div class="hero card hero-minimal">
         <h1 id="intro-title">MBTI已经过时，SBTI来了。</h1>
         <div class="hero-actions hero-actions-single">
-          <button id="startBtn" class="btn-primary" aria-label="开始 SBTI 人格测试" onclick="window.startTest && window.startTest(false)">开始测试</button>
+          <button id="startBtn" class="btn-primary" aria-label="开始 SBTI 人格测试">开始测试</button>
         </div>
       </div>
 
@@ -2420,6 +2420,7 @@
     
     // 开始测试
     window.startTest = function startTest(preview = false) {
+      console.log('startTest called with preview:', preview);
       app.previewMode = preview;
       app.answers = {};
       clearResult();
@@ -2745,7 +2746,9 @@
     }
     
     function bindEventListeners() {
+        console.log('bindEventListeners called');
         const startBtn = document.getElementById('startBtn');
+        console.log('startBtn:', startBtn);
         const backIntroBtn = document.getElementById('backIntroBtn');
         const submitBtn = document.getElementById('submitBtn');
         const restartBtn = document.getElementById('restartBtn');
@@ -2755,11 +2758,14 @@
         const downloadBtn = document.getElementById('downloadBtn');
         
         if (startBtn) {
-            startBtn.addEventListener('click', () => startTest(false));
-        } else {
-            console.error('startBtn element not found!');
-        }
-        
+                    console.log('Adding click listener to startBtn');
+                    startBtn.addEventListener('click', () => {
+                        console.log('startBtn clicked!');
+                        window.startTest(false);
+                    });
+                } else {
+                    console.error('startBtn element not found!');
+                }        
         if (backIntroBtn) {
             backIntroBtn.addEventListener('click', () => showScreen('intro'));
         }
@@ -2769,7 +2775,7 @@
         }
         
         if (restartBtn) {
-            restartBtn.addEventListener('click', () => startTest(false));
+            restartBtn.addEventListener('click', () => window.startTest(false));
         }
         
         if (toTopBtn) {
