@@ -14,3 +14,23 @@ logs
 .env
 .env.*
 !.env.example
+
+# 非站点运行所需：本地 npm / E2E 工具链
+package.json
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+e2e-smoke.mjs
+
+# 非站点运行所需：SEO/调研/过程稿（保留在本地即可）
+keyword-research.md
+SEO-IMPLEMENTATION-PLAN.md
+SEO-IMPLEMENTATION-SUMMARY.md
+SEO-PROJECT-SUMMARY.md
+SEO-REQUIREMENTS.md
+TESTING.md
+DEPLOYMENT.md
+
+# 本地说明（不纳入版本库）
+AGENTS.md
+DEPLOY-GUIDE.md
