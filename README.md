@@ -124,10 +124,17 @@ npx serve
 2. 在仓库设置中启用GitHub Pages
 3. 访问生成的URL
 
-### Vercel
-1. 导入GitHub仓库到Vercel
-2. 自动部署
-3. 配置自定义域名
+### Vercel（推荐：纯静态，无构建）
+
+仓库根目录已包含 `vercel.json`（静态资源缓存头）。按下面设置即可正常打开测试与人格子页：
+
+1. [Vercel Dashboard](https://vercel.com/new) → Import 本仓库  
+2. **Framework Preset** 选 **Other**（或 “No Framework”）  
+3. **Build Command** 留空；**Output Directory** 留空或填 `.`  
+4. **Install Command** 留空（项目无 npm 构建依赖）  
+5. Deploy；如需自定义域名，在 Project → Domains 里绑定  
+
+说明：站点入口为根目录 `index.html`，`personality/*.html`、`image/`、`data/` 等均为静态文件，由 CDN 直接提供，无需 Node 构建步骤。
 
 ### 其他服务器
 1. 克隆或复制文件到服务器

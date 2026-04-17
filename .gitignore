@@ -1,11 +1,18 @@
 # Node dependencies
 node_modules
 
+# Playwright E2E（与静态站发布无关，不上 GitHub）
+tests/
+
+# 人格骨架中间目录（合并到 personality/ 后仅本地保留）
+personality-skel/
+
 # Logs
 logs
 *.log
 
 # Misc
+.omc/
 .DS_Store
 .fleet
 .idea
@@ -15,12 +22,13 @@ logs
 .env.*
 !.env.example
 
-# 非站点运行所需：本地 npm / E2E 工具链
-package.json
-package-lock.json
+# 非站点运行所需：本地 npm（根目录仍可忽略）
+/package.json
+/package-lock.json
 pnpm-lock.yaml
 yarn.lock
 e2e-smoke.mjs
+
 
 # 非站点运行所需：SEO/调研/过程稿（保留在本地即可）
 keyword-research.md
@@ -34,3 +42,8 @@ DEPLOYMENT.md
 # 本地说明（不纳入版本库）
 AGENTS.md
 DEPLOY-GUIDE.md
+
+# 本地素材 / 定稿表（与仓库发布无关，不上 GitHub）
+*.docx
+*.xlsx
+人格.txt
