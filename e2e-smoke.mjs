@@ -15,6 +15,11 @@ import { chromium } from "playwright";
 
 const BASE = process.env.SBTI_BASE || "http://127.0.0.1:8765/index.html";
 
+/** 个别环境下系统 Chrome 冷启动较慢，默认放宽至 5 分钟；可用 SBTI_PLAYWRIGHT_LAUNCH_TIMEOUT_MS 覆盖 */
+const LAUNCH_TIMEOUT_MS = Number(
+  process.env.SBTI_PLAYWRIGHT_LAUNCH_TIMEOUT_MS || "",
+) || 300000;
+
 /** @param {string | undefined} userPath */
 function resolveChromeExecutable(userPath) {
   if (!userPath || !fs.existsSync(userPath)) return undefined;
@@ -40,7 +45,10 @@ function chromeForTestingPath() {
 
 async function launchChromium() {
   const executablePath = chromeForTestingPath();
-  const opts = executablePath ? { executablePath } : {};
+  const launchOpts = { timeout: LAUNCH_TIMEOUT_MS };
+  const opts = executablePath
+    ? { executablePath, ...launchOpts }
+    : { ...launchOpts };
   try {
     return await chromium.launch(opts);
   } catch (e) {
@@ -48,7 +56,10 @@ async function launchChromium() {
       "[e2e-smoke] 默认 Chromium 启动失败，尝试系统 Chrome：",
       /** @type {Error} */ (e).message || e,
     );
-    return await chromium.launch({ channel: "chrome" });
+    return await chromium.launch({
+      channel: "chrome",
+      timeout: LAUNCH_TIMEOUT_MS,
+    });
   }
 }
 
