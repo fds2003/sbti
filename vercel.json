@@ -1,5 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/personality/index.html",
+      "destination": "/personality/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/image/(.*)",
