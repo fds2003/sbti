@@ -3,13 +3,19 @@
 
 默认输出到 personality-skel/，避免 personality/ 为 root 属主时无法写入。
 合并到站点：见 personality-skel/README.txt
+
+生成内容含：Article / BreadcrumbList JSON-LD、描述性图片 alt。
 """
 import argparse
+import html
 import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JSON_PATH = os.path.join(ROOT, "data", "personality-source.json")
+
+DATE_PUBLISHED = "2026-04-10"
+DATE_MODIFIED = "2026-05-06"
 
 TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN">
@@ -17,14 +23,20 @@ TEMPLATE = """<!DOCTYPE html>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{code} {cn} - SBTI 人格类型</title>
-  <meta name="description" content="{tagline} SBTI 趣味人格测试，{cn} 类型一句话画像。" />
+  <meta name="description" content="{tagline_html} SBTI 趣味人格测试，{cn} 类型一句话画像。" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="{domain}/personality/{slug}.html" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="{domain}/personality/{slug}.html" />
   <meta property="og:title" content="{code} {cn} - SBTI" />
-  <meta property="og:description" content="{tagline}" />
+  <meta property="og:description" content="{tagline_html}" />
   <meta property="og:image" content="{domain}/image/{image}" />
+  <script type="application/ld+json">
+__ARTICLE_JSON__
+  </script>
+  <script type="application/ld+json">
+__BREADCRUMB_JSON__
+  </script>
   <style>
     :root {{
       --bg: #f6faf6;
@@ -85,8 +97,8 @@ TEMPLATE = """<!DOCTYPE html>
     </nav>
     <article class="card">
       <h1>{code} · {cn}</h1>
-      <p class="tagline">{tagline}</p>
-      <img class="hero-img" src="../image/{image}" width="320" height="320" alt="{code} {cn}" loading="lazy" decoding="async" />
+      <p class="tagline">{tagline_html}</p>
+      <img class="hero-img" src="../image/{image}" width="320" height="320" alt="{img_alt}" loading="lazy" decoding="async" fetchpriority="low" />
       <p class="lead">
         在 SBTI 中，<strong>{code}</strong> 对应「{cn}」人格画像。完整长文解读与十五维度评分请在完成测试后的结果页查看；本页为独立收录的一句话介绍与入口。
       </p>
@@ -96,6 +108,91 @@ TEMPLATE = """<!DOCTYPE html>
 </body>
 </html>
 """
+
+
+def esc_html(s: str) -> str:
+    return (
+        s.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def article_schema(domain: str, t: dict) -> dict:
+    slug = t["slug"]
+    url = f"{domain}/personality/{slug}.html"
+    img_url = f"{domain}/image/{t['image']}"
+    headline = f"{t['code']} {t['cn']} - SBTI 人格类型"
+    desc = f"{t['tagline']} SBTI 趣味人格测试，{t['cn']} 类型一句话画像。"
+    return {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": headline,
+        "description": desc,
+        "url": url,
+        "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+        "image": [img_url],
+        "author": {"@type": "Organization", "name": "SBTI"},
+        "publisher": {
+            "@type": "Organization",
+            "name": "SBTI 人格测试",
+            "logo": {
+                "@type": "ImageObject",
+                "url": f"{domain}/image/CTRL.png",
+            },
+        },
+        "datePublished": DATE_PUBLISHED,
+        "dateModified": DATE_MODIFIED,
+    }
+
+
+def breadcrumb_schema(domain: str, t: dict) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "首页",
+                "item": f"{domain}/",
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "人格图鉴",
+                "item": f"{domain}/personality/",
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": f"{t['code']} {t['cn']}",
+                "item": f"{domain}/personality/{t['slug']}.html",
+            },
+        ],
+    }
+
+
+def hub_breadcrumb_schema(domain: str) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "首页",
+                "item": f"{domain}/",
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "人格图鉴",
+                "item": f"{domain}/personality/",
+            },
+        ],
+    }
 
 
 def main():
@@ -112,22 +209,36 @@ def main():
         data = json.load(f)
     domain = data.get("canonicalDomain", "https://sbti.oucloud.top").rstrip("/")
     os.makedirs(out_dir, exist_ok=True)
-    skip = {"ctrl", "boss"}  # 保留原有较详版页面（若已存在）
+    skip = {"ctrl", "boss"}
     for t in data["types"]:
         slug = t["slug"]
         if slug in skip:
             continue
         path = os.path.join(out_dir, f"{slug}.html")
-        html = TEMPLATE.format(
+        tagline_html = esc_html(t["tagline"])
+        img_alt = html.escape(
+            f"SBTI {t['code']} {t['cn']} 人格类型：{t['tagline']}", quote=True
+        )
+        article_json = json.dumps(
+            article_schema(domain, t), ensure_ascii=False, indent=2
+        )
+        breadcrumb_json = json.dumps(
+            breadcrumb_schema(domain, t), ensure_ascii=False, indent=2
+        )
+        body = TEMPLATE.format(
             domain=domain,
             code=t["code"],
             cn=t["cn"],
-            tagline=t["tagline"].replace("&", "&amp;").replace("<", "&lt;"),
+            tagline_html=tagline_html,
             slug=slug,
             image=t["image"],
+            img_alt=img_alt,
+        )
+        body = body.replace("__ARTICLE_JSON__", article_json).replace(
+            "__BREADCRUMB_JSON__", breadcrumb_json
         )
         with open(path, "w", encoding="utf-8") as out:
-            out.write(html)
+            out.write(body)
         print("wrote", path)
 
     hub_lines = [
@@ -140,6 +251,9 @@ def main():
         for t in data["types"]
     ]
     hub_body = "\n".join(hub_lines)
+    hub_breadcrumb_json = json.dumps(
+        hub_breadcrumb_schema(domain), ensure_ascii=False, indent=2
+    )
     hub_html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -148,7 +262,10 @@ def main():
   <title>SBTI 27 种人格图鉴</title>
   <meta name="description" content="SBTI 趣味人格测试全部人格类型一览：一句话画像与入口。" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="{domain}/personality/index.html" />
+  <link rel="canonical" href="{domain}/personality/" />
+  <script type="application/ld+json">
+{hub_breadcrumb_json}
+  </script>
   <style>
     :root {{ --bg: #f6faf6; --text: #1e2a22; --muted: #6a786f; --line: #dbe8dd; --accent-strong: #4d6a53; }}
     * {{ box-sizing: border-box; }}

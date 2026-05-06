@@ -11,6 +11,10 @@ personality-skel/
 logs
 *.log
 
+# Python
+__pycache__/
+*.pyc
+
 # Misc
 .playwright-mcp/
 sbti-google-trends.png

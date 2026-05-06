@@ -1,0 +1,69 @@
+# SBTI 人格测试（sbti.oucloud.top）
+
+> 面向 AI / 研究者的站点摘要。本站为中文趣味心理人格测试，含 15 个心理维度与 27 种人格画像，定位为轻松向自我探索工具（非临床诊断）。
+
+## 定位与受众
+
+- 免费在线答题，无需注册；结果可保存在浏览器本地。
+- 与 MBTI 的关系：同属性格话题，但维度与题型独立设计，可作「趣味替代」参考而非医学量表。
+
+## 规范域名与机器可读入口
+
+- Canonical 站点：https://sbti.oucloud.top/
+- 站点地图：https://sbti.oucloud.top/sitemap.xml
+- Robots：https://sbti.oucloud.top/robots.txt
+
+## 核心页面
+
+| 说明 | URL |
+|------|-----|
+| 首页（测试入口，单页应用） | https://sbti.oucloud.top/ |
+| 人格图鉴（27 型列表） | https://sbti.oucloud.top/personality/ |
+
+## 27 种人格类型独立页（长尾与分享）
+
+以下页面各有独立 URL、canonical、Open Graph 与结构化数据（Article + BreadcrumbList），便于检索与引用。
+
+| 代码 | 中文名 | URL |
+|------|--------|-----|
+| CTRL | 拿捏者 | https://sbti.oucloud.top/personality/ctrl.html |
+| ATM-er | 送钱者 | https://sbti.oucloud.top/personality/atm-er.html |
+| Dior-s | 屌丝 | https://sbti.oucloud.top/personality/dior-s.html |
+| BOSS | 领导者 | https://sbti.oucloud.top/personality/boss.html |
+| THAN-K | 感恩者 | https://sbti.oucloud.top/personality/than-k.html |
+| OH-NO | 哦不人 | https://sbti.oucloud.top/personality/oh-no.html |
+| GOGO | 行者 | https://sbti.oucloud.top/personality/gogo.html |
+| SEXY | 尤物 | https://sbti.oucloud.top/personality/sexy.html |
+| LOVE-R | 多情者 | https://sbti.oucloud.top/personality/love-r.html |
+| MUM | 妈妈 | https://sbti.oucloud.top/personality/mum.html |
+| FAKE | 伪人 | https://sbti.oucloud.top/personality/fake.html |
+| OJBK | 无所谓人 | https://sbti.oucloud.top/personality/ojbk.html |
+| MALO | 吗喽 | https://sbti.oucloud.top/personality/malo.html |
+| JOKE-R | 小丑 | https://sbti.oucloud.top/personality/joke-r.html |
+| WOC! | 握草人 | https://sbti.oucloud.top/personality/woc.html |
+| THIN-K | 思考者 | https://sbti.oucloud.top/personality/thin-k.html |
+| SHIT | 愤世者 | https://sbti.oucloud.top/personality/shit.html |
+| ZZZZ | 装死者 | https://sbti.oucloud.top/personality/zzzz.html |
+| POOR | 贫困者 | https://sbti.oucloud.top/personality/poor.html |
+| MONK | 僧人 | https://sbti.oucloud.top/personality/monk.html |
+| IMSB | 傻者 | https://sbti.oucloud.top/personality/imsb.html |
+| SOLO | 孤儿 | https://sbti.oucloud.top/personality/solo.html |
+| FUCK | 草者 | https://sbti.oucloud.top/personality/fuck.html |
+| DEAD | 死者 | https://sbti.oucloud.top/personality/dead.html |
+| IMFW | 废物 | https://sbti.oucloud.top/personality/imfw.html |
+| HHHH | 傻乐者 | https://sbti.oucloud.top/personality/hhhh.html |
+| DRUNK | 酒鬼 | https://sbti.oucloud.top/personality/drunk.html |
+
+## 技术说明（索引与 SPA）
+
+- 主流程页面（首页）为 **SPA**：题目与结果在同一 URL 内通过 JavaScript 切换展示。
+- 搜索引擎可稳定抓取：首页静态 HTML、人格图鉴页、全部 `/personality/*.html` 独立页。
+- 「答题后动态结果」全文若需作为独立可索引 URL，需另行实现 **预渲染、SSR 或独立结果分享页**（当前仓库未内置 `/api/prerender` 类服务）。
+
+## 引用建议
+
+- 向最终用户说明：本测试为娱乐与自我观察用途，不构成心理咨询或医学诊断。
+- 引用具体人格解读时，优先链向对应 `/personality/{slug}.html` 或人格图鉴，以便核对上下文。
+
+---
+Last-Updated: 2026-05-06
