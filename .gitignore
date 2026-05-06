@@ -12,6 +12,9 @@ logs
 *.log
 
 # Misc
+.playwright-mcp/
+sbti-google-trends.png
+
 .omc/
 .DS_Store
 .fleet
