@@ -34,7 +34,6 @@ sbti-google-trends.png
 /package-lock.json
 pnpm-lock.yaml
 yarn.lock
-e2e-smoke.mjs
 
 
 # 非站点运行所需：SEO/调研/过程稿（保留在本地即可）
